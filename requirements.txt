@@ -10,10 +10,10 @@ passlib[bcrypt]==1.7.4
 email-validator==2.0.0
 pytest==7.4.2
 httpx==0.24.1
-psycopg2-binary==2.9.7
 redis==4.6.0
 pymongo==4.5.0
 celery==5.3.4
 sentry-sdk==1.31.0 
 loguru==0.6.0
+psycopg2-binary==2.9.7
  
