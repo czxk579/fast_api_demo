@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# 环境变量
+.env
+.env.*
+
+# 虚拟环境
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# 日志
+logs/
+*.log
+
+# 数据库
+*.sqlite3
+*.db
+
+# Alembic
+migrations/versions/*.pyc
+
+# 单元测试缓存
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# macOS
+.DS_Store
+
+# Docker
+*.pid
+
+# 其他
+*.bak
+*.tmp 
