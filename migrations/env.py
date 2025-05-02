@@ -18,7 +18,7 @@ config = context.config
 
 # 从环境变量中获取数据库URL
 from app.core.config import settings
-config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))
+config.set_main_option("sqlalchemy.url", str(settings.SQLALCHEMY_DATABASE_URI))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
