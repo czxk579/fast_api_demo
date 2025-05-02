@@ -1,9 +1,11 @@
-import os
 import secrets
+from loguru import logger
 from typing import List, Union, Dict, Any, Optional
 
 from pydantic import AnyHttpUrl, PostgresDsn, validator
 from pydantic_settings import BaseSettings
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 class Settings(BaseSettings):
@@ -40,6 +42,10 @@ class Settings(BaseSettings):
     MYSQL_DB: str = "test"
     DATABASE_URL: Optional[str] = None
     DATABASE_ECHO: bool = True
+    
+    @property
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
+        return self.get_database_url()
 
     # Redis设置
     REDIS_SERVER: str = "localhost"
@@ -61,12 +67,13 @@ class Settings(BaseSettings):
 
     # Sentry设置
     SENTRY_DSN: Optional[str] = None
+    
 
-    @property
-    def database_url(self):
-        if self.DATABASE_URL:
-            return self.DATABASE_URL
-        return f"mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}@{self.MYSQL_SERVER}:{self.MYSQL_PORT}/{self.MYSQL_DB}"
+    def get_database_url(self, db_name: str = None):
+        db = db_name or self.MYSQL_DB
+        database_url = f"mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}@{self.MYSQL_SERVER}:{self.MYSQL_PORT}/{db}"
+        logger.info(f"database_url: {database_url}")
+        return database_url
 
     @property
     def redis_url(self):
@@ -85,4 +92,10 @@ class Settings(BaseSettings):
 
 # 创建配置实例
 settings = Settings() 
+
+def get_session_for_db(db_name: str):
+    url = settings.get_database_url(db_name)
+    engine = create_engine(url, echo=settings.DATABASE_ECHO)
+    Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    return Session() 
  

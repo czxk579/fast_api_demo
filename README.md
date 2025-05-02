@@ -76,7 +76,7 @@ alembic upgrade head
   - 运行指定模块：
     pytest -vs ./tests/test_main.py
     pytest -vs ./tests/test_users.py
-    pytest -vs ./tests/test_users.py -v
+    pytest -vs ./tests/test_api_auth.py -v
     pytest -vs ./tests/test_users.py -v -p no:warnings
   - 运行指定目录：pytest -vs ./tests
   - 通过nodeID运行指定的测试函数：

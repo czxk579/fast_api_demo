@@ -4,15 +4,10 @@ from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
 
-engine = create_engine(
-    settings.database_url,
-    echo=settings.DATABASE_ECHO,
-    pool_pre_ping=True,
-    pool_recycle=3600,
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base()
+
+engine = create_engine(settings.SQLALCHEMY_DATABASE_URI, echo=settings.DATABASE_ECHO)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 # 依赖注入函数，用于获取数据库会话
@@ -22,3 +17,9 @@ def get_db():
         yield db
     finally:
         db.close() 
+
+def get_session_for_db(db_name: str):
+    url = settings.get_database_url(db_name)
+    engine = create_engine(url, echo=settings.DATABASE_ECHO)
+    Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    return Session() 

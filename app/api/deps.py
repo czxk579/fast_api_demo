@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.security import ALGORITHM
-from app.db.session import SessionLocal
+from app.db.session import get_session_for_db, SessionLocal
 from app.models.user import User
 from app.schemas.user import TokenPayload
 from app.services import user as user_service

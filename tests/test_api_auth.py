@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 
 from app.services import user as user_service
+from app.schemas.user import UserCreate
 
 
 def test_login(client: TestClient, db) -> None:
@@ -11,7 +12,7 @@ def test_login(client: TestClient, db) -> None:
         "username": "testuser",
         "password": "testpass123",
     }
-    user = user_service.create(db, obj_in=user_in)
+    user = user_service.create(db, obj_in=UserCreate(**user_in))
 
     # 测试登录
     login_data = {
@@ -33,7 +34,7 @@ def test_login_wrong_password(client: TestClient, db) -> None:
         "username": "testuser2",
         "password": "testpass123",
     }
-    user = user_service.create(db, obj_in=user_in)
+    user = user_service.create(db, obj_in=UserCreate(**user_in))
 
     # 测试错误密码登录
     login_data = {
@@ -44,8 +45,24 @@ def test_login_wrong_password(client: TestClient, db) -> None:
     assert r.status_code == 400
 
 
-def test_test_token(client: TestClient, superuser_token_headers) -> None:
+def test_test_token(client: TestClient, superuser_token_headers, db) -> None:
     """测试令牌验证"""
+    r = client.post("/api/v1/auth/test-token", headers=superuser_token_headers)
+    assert r.status_code == 200
+    result = r.json()
+    assert "id" in result
+    assert "email" in result
+    assert result["is_superuser"] is True
+
+    # 创建测试用户
+    superuser_in = {
+        "email": "test@example.com",
+        "username": "testuser",
+        "password": "testpass123",
+    }
+    user = user_service.create(db, obj_in=UserCreate(**superuser_in))
+
+    # 测试令牌验证
     r = client.post("/api/v1/auth/test-token", headers=superuser_token_headers)
     assert r.status_code == 200
     result = r.json()

@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 from app.db.session import Base, get_db
 from app.services import user as user_service
+from app.schemas.user import UserCreate
 
 # 导入主应用
 import sys
@@ -18,9 +19,10 @@ from main import app
 
 
 # 测试数据库设置
-TEST_SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+TEST_SQLALCHEMY_DATABASE_URL = settings.SQLALCHEMY_DATABASE_URI
+# TEST_SQLALCHEMY_DATABASE_URL = "mysql+pymysql://chen:chen123@40.233.84.60:3306/fastapi_demo"
 engine = create_engine(
-    TEST_SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    TEST_SQLALCHEMY_DATABASE_URL, echo=settings.DATABASE_ECHO
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -66,7 +68,7 @@ def superuser_token_headers(client: TestClient, db) -> Dict[str, str]:
         "password": "admin123",
         "is_superuser": True,
     }
-    user = user_service.create(db, obj_in=superuser_in)
+    user = user_service.create(db, obj_in=UserCreate(**superuser_in))
     
     login_data = {
         "username": superuser_in["email"],
