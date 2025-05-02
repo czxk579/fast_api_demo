@@ -32,10 +32,9 @@ def create_user(
     *,
     db: Session = Depends(deps.get_db),
     user_in: UserCreate,
-    current_user: User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
-    创建新用户
+    创建新用户（临时开放权限，仅用于创建首个用户）
     """
     user = user_service.get_by_email(db, email=user_in.email)
     if user:

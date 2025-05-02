@@ -29,8 +29,8 @@ class UserInDBBase(UserBase):
     id: int
     email: EmailStr
     username: str
-    created_at: datetime
-    updated_at: Optional[datetime] = None
+    create_time: datetime
+    update_time: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -54,3 +54,4 @@ class Token(BaseModel):
 
 class TokenPayload(BaseModel):
     sub: Optional[int] = None 
+ 

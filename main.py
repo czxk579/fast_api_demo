@@ -11,6 +11,10 @@ from app.api.deps import get_db
 
 from app.api.v1.api import api_router
 from app.core.config import settings
+from app.db.session import Base, engine
+
+# 创建数据库表
+Base.metadata.create_all(bind=engine)
 
 # 配置 Sentry
 if settings.SENTRY_DSN:
@@ -39,7 +43,7 @@ logger.add(
 # 初始化 FastAPI 应用
 app = FastAPI(
     title=settings.APP_NAME,
-    openapi_url="/api/v1/openapi.json",
+    openapi_url="/api/openapi.json",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -89,5 +93,19 @@ def test_db(db: Session = Depends(get_db)):
 # 主函数
 if __name__ == "__main__":
     import uvicorn
+    import sys
+    import os
+    
+    # 添加项目根目录到Python路径
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    
+    # 设置日志格式
     logger.info(f"服务名称: {settings.APP_NAME}，启动端口: {settings.SERVER_PORT}")
-    uvicorn.run("main:app", host="0.0.0.0", port=settings.SERVER_PORT, reload=True) 
+    
+    # 启动服务器
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=settings.SERVER_PORT,
+        reload=True
+    ) 
