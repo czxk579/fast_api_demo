@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
     SECRET_KEY: str = secrets.token_urlsafe(32)
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8天
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1"]
 
     # 日志设置
