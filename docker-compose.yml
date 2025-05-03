@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: fast_api_web
+    networks:
+      - my-network  
     ports:
       - "8090:8000" # 使用应用配置的端口
     volumes:
@@ -14,6 +17,10 @@ services:
       - .env # 使用默认的环境配置文件
     restart: unless-stopped
     command: python main.py
+
+networks:
+  my-network:
+    external: true
 
   # celery_worker:
   #   build:
