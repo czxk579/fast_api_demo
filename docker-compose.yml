@@ -15,35 +15,31 @@ services:
     restart: unless-stopped
     command: python main.py
 
-  celery_worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app
-      - ./logs:/app/logs # 日志持久化
-    env_file:
-      - .env # 使用默认的环境配置文件
-    restart: unless-stopped
-    command: celery -A app.core.celery_app worker --loglevel=info
-    depends_on:
-      - web
+  # celery_worker:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - .:/app
+  #     - ./logs:/app/logs # 日志持久化
+  #   env_file:
+  #     - .env # 使用默认的环境配置文件
+  #   restart: unless-stopped
+  #   command: celery -A app.core.celery_app worker --loglevel=info
+  #   depends_on:
+  #     - web
 
-  celery_beat:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app
-      - ./logs:/app/logs # 日志持久化
-    env_file:
-      - .env # 使用默认的环境配置文件
-    restart: unless-stopped
-    command: celery -A app.core.celery_app beat --loglevel=info
-    depends_on:
-      - web
-      - celery_worker
-
-volumes:
-  postgres_data:
-  mongo_data:
+  # celery_beat:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - .:/app
+  #     - ./logs:/app/logs # 日志持久化
+  #   env_file:
+  #     - .env # 使用默认的环境配置文件
+  #   restart: unless-stopped
+  #   command: celery -A app.core.celery_app beat --loglevel=info
+  #   depends_on:
+  #     - web
+  #     - celery_worker
