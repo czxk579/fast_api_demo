@@ -2,61 +2,47 @@ version: '3'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8090:8000" # 使用应用配置的端口
     volumes:
       - .:/app
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/fastapi_demo
-      - REDIS_URL=redis://redis:6379/0
-      - CELERY_BROKER_URL=redis://redis:6379/1
-      - CELERY_RESULT_BACKEND=redis://redis:6379/2
-      - MONGO_URL=mongodb://mongo:27017/fastapi_demo
-    depends_on:
-      - db
-      - redis
-      - mongo
-      - celery_worker
-
-  db:
-    image: postgres:13
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=fastapi_demo
-    ports:
-      - "5432:5432"
-
-  redis:
-    image: redis:6
-    ports:
-      - "6379:6379"
-
-  mongo:
-    image: mongo:4
-    volumes:
-      - mongo_data:/data/db
-    ports:
-      - "27017:27017"
+      - ./logs:/app/logs # 日志持久化
+    env_file:
+      - .env # 使用默认的环境配置文件
+    restart: unless-stopped
+    command: python main.py
 
   celery_worker:
-    build: .
-    command: celery -A app.core.celery_app worker --loglevel=info
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - .:/app
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/fastapi_demo
-      - REDIS_URL=redis://redis:6379/0
-      - CELERY_BROKER_URL=redis://redis:6379/1
-      - CELERY_RESULT_BACKEND=redis://redis:6379/2
-      - MONGO_URL=mongodb://mongo:27017/fastapi_demo
+      - ./logs:/app/logs # 日志持久化
+    env_file:
+      - .env # 使用默认的环境配置文件
+    restart: unless-stopped
+    command: celery -A app.core.celery_app worker --loglevel=info
     depends_on:
-      - db
-      - redis
-      - mongo
+      - web
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - ./logs:/app/logs # 日志持久化
+    env_file:
+      - .env # 使用默认的环境配置文件
+    restart: unless-stopped
+    command: celery -A app.core.celery_app beat --loglevel=info
+    depends_on:
+      - web
+      - celery_worker
 
 volumes:
   postgres_data:

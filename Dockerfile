@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 WORKDIR /app/
 
@@ -9,5 +9,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 复制项目文件
 COPY . /app/
 
-# 运行服务器
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"] 
+# 设置环境变量
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+# 命令由docker-compose.yml控制
+# CMD ["python", "main.py"]
