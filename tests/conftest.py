@@ -20,7 +20,7 @@ from main import app
 
 # 测试数据库设置
 TEST_SQLALCHEMY_DATABASE_URL = settings.SQLALCHEMY_DATABASE_URI
-# TEST_SQLALCHEMY_DATABASE_URL = "mysql+pymysql://chen:chen123@40.233.84.60:3306/fastapi_demo"
+
 engine = create_engine(
     TEST_SQLALCHEMY_DATABASE_URL, echo=settings.DATABASE_ECHO
 )
